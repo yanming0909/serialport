@@ -1,0 +1,44 @@
+apply plugin: 'com.android.library'
+
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 28
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path 'CMakeLists.txt'
+        }
+    }
+    buildToolsVersion '28.0.3'
+}
+
+dependencies {
+//    compile fileTree(dir: 'libs', include: ['*.jar'])
+//    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+//        exclude group: 'com.android.support', module: 'support-annotations'
+//    })
+//    compile 'com.android.support:appcompat-v7:25.3.0'
+//    testCompile 'junit:junit:4.12'
+}
+
+apply from: '../jitpack.gradle'
+
+task makeJar(type: Copy) {
+    delete 'build/libs/serialport.jar' //删除已经存在的jar包
+    from('build/intermediates/bundles/release/')//从该目录下加载要打包的文件
+    into('build/libs/')//jar包的保存目录
+    include('classes.jar')//设置过滤，只打包classes文件
+    rename('classes.jar', 'serialport.jar')//重命名，mylibrary.jar 根据自己的需求设置
+}
+makeJar.dependsOn(build)
